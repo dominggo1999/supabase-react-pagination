@@ -4,20 +4,20 @@ import React, {
 
 import { auth } from '../config/firebase';
 
-const AuthContext = createContext();
+export const AuthContext = createContext({});
 
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-export const AuthProvider = ({ children }) => {
+const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      setLoading(false);
       setCurrentUser(user);
+      setLoading(false);
     });
 
     return unsubscribe;

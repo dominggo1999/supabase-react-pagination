@@ -4,10 +4,14 @@ export const Card = styled.div`
   ${tw`
     rounded-2xl 
     bg-grayish 
-    text-white
     px-6
     py-10
   `}
+  box-shadow: rgba(0, 0, 0, 0.192) 0px 5px 15px;
+
+${({ status }) => (status
+    ? tw`bg-black`
+    : tw`bg-grayish`)}
 `;
 
 export const Title = styled.h1`

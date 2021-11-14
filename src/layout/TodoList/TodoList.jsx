@@ -5,13 +5,16 @@ import { todos }from '../../data/todos';
 import Spinner from '../../shared/Spinner/Spinner';
 import TodoCard from '../TodoCard/TodoCard';
 import 'twin.macro';
+import { useAuth } from '../../context/AuthContext';
+import useTodoList from '../../hooks/useTodoList';
 
 const TodoList = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
 
   // Fetch data here
   // const {todos, loading, error} = useTodos(userId);
+  const todoList = useTodoList(setLoading, setError);
 
   // if loading display loading components
   if(loading) {
@@ -34,11 +37,11 @@ const TodoList = () => {
       <TodoListWrapper>
         <Row tw="gap-y-8">
           {
-            todos && todos.length > 1 && todos.map(({ id, ...rest }) => {
+            todoList && todoList.length > 0 && todoList.map((item) => {
               return (
                 <TodoCard
-                  key={id}
-                  {...rest}
+                  key={item.id}
+                  item={item}
                 />
               );
             })

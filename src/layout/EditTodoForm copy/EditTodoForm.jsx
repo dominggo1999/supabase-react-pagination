@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Field, Formik, Form, ErrorMessage,
 } from 'formik';
 import * as Yup from 'yup';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   Input, Label, Error, FormWrapper,
 } from '../../shared/Form/Form';
@@ -11,6 +11,10 @@ import { useAuth } from '../../context/AuthContext';
 import FormHeader from '../../shared/FormHeader/FormHeader';
 import { Container } from '../../shared/Flexi';
 import Link from '../../shared/Link';
+import useSingleTodo from '../../hooks/useSingleTodo';
+import Spinner from '../../shared/Spinner/Spinner';
+import { SpinnerWrapper } from '../../shared/Spinner/Spinner.style';
+import { updateTodo } from '../../services/todo';
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -26,12 +30,42 @@ const initialValues = {
 
 const EditTodoForm = () => {
   const { todoId } = useParams();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState();
+  const [submitError, setSubmitError] = useState();
+  const history = useHistory();
+  const { currentUser } = useAuth();
 
   // get single todo data using hooks
-  // const {data} = useSingleTodo(todoId);
+  const todoItem = useSingleTodo(todoId, setLoading, setError);
 
-  const handleSubmit = (values) => {
+  // if loading display loading components
+  if(loading) {
+    return (
+      <Container>
+        <SpinnerWrapper>
+          <Spinner />
+        </SpinnerWrapper>
+      </Container>
+    );
+  }
+
+  // If error display error modal
+  if(error) {
+    return <p>an error occured, try again later</p>;
+  }
+
+  const { title, description } = todoItem;
+
+  const initialValues = {
+    title,
+    description,
+  };
+
+  const handleSubmit = async (values) => {
     // call service here
+    const { success } = await updateTodo(values.title, values.description, todoId, currentUser, setError);
+    if(success) history.push('/');
   };
 
   return (

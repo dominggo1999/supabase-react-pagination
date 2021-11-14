@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Field, Formik, Form, ErrorMessage,
 } from 'formik';
 import * as Yup from 'yup';
+import { Link, useHistory } from 'react-router-dom';
 import {
   Input, Label, Error, FormWrapper,
 } from '../../shared/Form/Form';
 import { useAuth } from '../../context/AuthContext';
 import FormHeader from '../../shared/FormHeader/FormHeader';
 import { Container } from '../../shared/Flexi';
+import { signUp } from '../../services/auth';
+import FormNavigation from '../../shared/FormNavigation/FormNavigation';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -25,13 +28,17 @@ const initialValues = {
 };
 
 const SignUpForm = () => {
-  const handleSubmit = (values) => {
-    console.log(values);
+  const [error, setError] = useState();
+  const history = useHistory();
 
-    // SignUp here
-
-    // If success redirect to dashboard
+  const handleSubmit = async (values) => {
+    const { success } = await signUp(values.email, values.password, setError);
+    if(success) history.push('/');
   };
+
+  if(error) {
+    return <h1>{error.code}</h1>;
+  }
 
   return (
     <Container>
@@ -74,6 +81,13 @@ const SignUpForm = () => {
             <button type="submit">Sign Up</button>
           </Form>
         </Formik>
+        <FormNavigation>
+          Already have an account ?
+          {' '}
+          <Link to="sign-in">
+            Sign In
+          </Link>
+        </FormNavigation>
       </FormWrapper>
     </Container>
   );

@@ -18,7 +18,7 @@ const skeletonAnimate = keyframes`
 /*
     Spinner Color
 */
-const spinnerColor = '#8D6375';
+const spinnerColor = '#10B981';
 
 export const SpinnerLogo = styled.div`
   width: 48px;
@@ -70,4 +70,14 @@ export const Skeleton = styled.div`
     right: -6px;
     transform: rotateZ(30deg)
   }
+`;
+
+export const SpinnerWrapper = styled.div`
+  ${tw`
+    w-full
+    h-screen
+    flex
+    justify-center
+    items-center
+  `}
 `;

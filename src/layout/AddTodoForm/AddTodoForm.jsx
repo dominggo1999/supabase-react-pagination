@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Field, Formik, Form, ErrorMessage,
 } from 'formik';
 import * as Yup from 'yup';
+import { useHistory } from 'react-router-dom';
 import {
   Input, Label, Error, FormWrapper,
 } from '../../shared/Form/Form';
-import { useAuth } from '../../context/AuthContext';
 import FormHeader from '../../shared/FormHeader/FormHeader';
 import { Container } from '../../shared/Flexi';
+import { addTodo } from '../../services/todo';
+import { useAuth } from '../../context/AuthContext';
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -23,10 +25,20 @@ const initialValues = {
 };
 
 const AddTodoForm = () => {
-  const handleSubmit = (values) => {
-    console.log(values);
+  const [error, setError] = useState();
+  const history = useHistory();
+
+  const { currentUser } = useAuth();
+
+  const handleSubmit = async (values) => {
     // call service here
+    const { success } = await addTodo(values.title, values.description, currentUser, setError);
+    if(success) history.push('/');
   };
+
+  if(error) {
+    return <h1>failed</h1>;
+  }
 
   return (
     <Container>
