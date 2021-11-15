@@ -2,7 +2,7 @@ import React, {
   createContext, useContext, useEffect, useState,
 } from 'react';
 
-import { auth } from '../config/firebase';
+import { supabase } from '../config/supabase';
 
 export const AuthContext = createContext({});
 
@@ -15,12 +15,23 @@ const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setCurrentUser(user);
+    // Check active sessions and sets the user
+    const session = supabase.auth.session();
+
+    if(session && session.user) {
+      setCurrentUser(session.user);
+      setLoading(false);
+    }else{
+      setCurrentUser(null);
+      setLoading(false);
+    }
+
+    const { data: listener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setCurrentUser(session?.user ?? null);
       setLoading(false);
     });
 
-    return unsubscribe;
+    return () => listener.unsubscribe();
   }, []);
 
   const value = { currentUser };

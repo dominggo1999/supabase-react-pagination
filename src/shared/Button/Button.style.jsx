@@ -8,6 +8,8 @@ export const Btn = styled.button`
     px-4 
     bg-green-500
     rounded-lg 
+    block
+    mb-5
   `}
   &:hover {
     ${tw`bg-green-400`}
